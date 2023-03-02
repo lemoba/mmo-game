@@ -1,0 +1,9 @@
+{
+  "Name": "MMO Game",
+  "Host": "0.0.0.0",
+  "TcpPort": 8999,
+  "MaxConn": 3000,
+  "Version": "V0.1",
+  "WorkerPoolSize":   4,
+  "MaxWorkerTaskLen": 10
+}
