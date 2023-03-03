@@ -3,3 +3,31 @@ syntax = "proto3";
 package pb;
 option go_package = "./;pb";
 option csharp_namespace="Pb"; // 给C#提供的选项
+
+// 返回玩家ID
+ message SyncPid {
+   uint32 Pid = 1; // 服务器生成的玩家ID
+ }
+
+ // 广播消息
+ message BroadCast {
+   uint32 Pid = 1;
+   uint32 Tp = 2; // 1:世界聊天, 2:玩家位置, 3:动作, 4:移动之后的坐标信息
+   oneof Data {
+     string Content = 3; // 聊天数据
+     Position P = 4; // 广播玩家位置
+     uint32 ActionData = 5; // 玩家具体动作
+   }
+ }
+
+ // 位置信息
+ message Position {
+   float X = 1;
+   float Y = 2;
+   float Z = 3;
+   float V = 4;
+ }
+
+ message Talk {
+   string content = 1; // 玩家聊天信息
+ }

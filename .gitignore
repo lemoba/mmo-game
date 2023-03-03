@@ -4,6 +4,7 @@
 *.o
 *.so
 *.class
+client
 main
 tmp
 .air.toml
