@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/lemoba/mmo-game/proto/pb"
 	"github.com/lemoba/zinx/ziface"
 	"google.golang.org/protobuf/proto"
 	"math/rand"
@@ -61,4 +62,33 @@ func (p *Player) SendMsg(msgID uint32, data proto.Message) {
 	if err := p.Conn.SendMsg(msgID, msg); err != nil {
 		fmt.Println("Player send msg error: ", err)
 	}
+}
+
+// 告知客户端玩家Pid, 同步已经生成的玩家ID给客户端
+func (p *Player) SyncPid() {
+	// 组建MsgID: 0的proto数据
+	proto_msg := &pb.SyncPid{
+		Pid: p.Pid,
+	}
+	// 将消息发送给客户端
+	p.SendMsg(1, proto_msg)
+}
+
+// 广播玩家子的出生地点
+func (p *Player) BroadCastStartPosition() {
+	// 组建MsgID: 200的proto数据
+	proto_msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  2, // 广播位置坐标
+		Data: &pb.BroadCast_P{
+			P: &pb.Position{
+				X: p.X,
+				Y: p.Y,
+				Z: p.Z,
+				V: p.V,
+			},
+		},
+	}
+	// 将消息发送给客户端
+	p.SendMsg(200, proto_msg)
 }

@@ -2,6 +2,16 @@ package core
 
 import "fmt"
 
+// 定义一些AOI的边界值
+const (
+	AOI_MIN_X  uint32 = 85
+	AOI_MAX_X  uint32 = 410
+	AOI_CNTS_X uint32 = 10
+	AOI_MIN_Y  uint32 = 75
+	AOI_MAX_Y  uint32 = 400
+	AOI_CNTS_Y uint32 = 20
+)
+
 /*
 AOI区域管理模块
 */
