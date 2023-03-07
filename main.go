@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/lemoba/mmo-game/apis"
 	"github.com/lemoba/mmo-game/core"
 	"github.com/lemoba/zinx/ziface"
 	"github.com/lemoba/zinx/znet"
@@ -18,8 +19,12 @@ func OnConnectionAdd(conn ziface.IConnection) {
 	// 将当前新上线的玩家添加到WorldManager中
 	core.WorldMgrObj.AddPlayer(player)
 
+	// 将改连接绑定一个玩家ID的属性
+	conn.SetProperty("pid", player.Pid)
+
 	fmt.Println("====> Player pid = ", player.Pid, " is arrived <====")
 }
+
 func main() {
 	// 创建zinx
 	s := znet.NewServer("MMO Game")
@@ -27,6 +32,7 @@ func main() {
 	// 创建HOOK函数
 	s.SetOnConnStart(OnConnectionAdd)
 	// 注册路由业务
+	s.AddRouter(2, &apis.WorldChatApi{})
 	// 启动服务
 	s.Serve()
 }
