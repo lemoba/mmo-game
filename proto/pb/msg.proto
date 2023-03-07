@@ -31,3 +31,14 @@ option csharp_namespace="Pb"; // 给C#提供的选项
  message Talk {
    string content = 1; // 玩家聊天信息
  }
+
+ // 同步玩家
+message SyncPlayers{
+  repeated Player ps=1;
+}
+
+// 玩家信息
+message Player{
+  uint32 Pid=1;
+  Position P=2;
+}

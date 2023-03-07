@@ -111,3 +111,58 @@ func (p *Player) Talk(content string) {
 		player.SendMsg(200, proto_msg)
 	}
 }
+
+// 同步玩家上线的位置信息
+func (p *Player) SyncSurrounding() {
+	// 1. 获取当前玩家周围有哪些
+	pids := WorldMgrObj.AOIManager.GetPidsByPos(p.X, p.Z)
+
+	players := make([]*Player, 0, len(pids))
+	for _, pid := range pids {
+		players = append(players, WorldMgrObj.GetPlayerByPid(pid))
+	}
+	// 2. 将当前的位置信息通过MsgID: 200 发送给周围的玩家(让其他玩家看到自己)
+	// 2.1 MsgID: 200
+	proto_msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  2,
+		Data: &pb.BroadCast_P{
+			P: &pb.Position{
+				X: p.X,
+				Y: p.Y,
+				Z: p.Z,
+				V: p.V,
+			},
+		},
+	}
+
+	// 2.2 广播消息给周围玩家
+	for _, player := range players {
+		player.SendMsg(200, proto_msg)
+	}
+
+	// 3. 将周围的全部玩家的位置信息发送给当前的玩家MsgID: 202 客户端(让自己看到其他玩家)
+	// 3.1 组建MsgID: 202 proto数据
+	players_proto_msg := make([]*pb.Player, 0, len(players))
+
+	for _, player := range players {
+		p := &pb.Player{
+			Pid: player.Pid,
+			P: &pb.Position{
+				X: player.X,
+				Y: player.Y,
+				Z: player.Z,
+				V: player.V,
+			},
+		}
+		players_proto_msg = append(players_proto_msg, p)
+	}
+
+	// 3.2 封装SyncPlayer protobuf数据
+	syncPlayers_proto_msg := &pb.SyncPlayers{
+		Ps: players_proto_msg[:],
+	}
+
+	// 3.3 将组建好的数据发送给当前的客户端
+	p.SendMsg(202, syncPlayers_proto_msg)
+}
